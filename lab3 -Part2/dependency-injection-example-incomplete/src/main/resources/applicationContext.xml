@@ -4,7 +4,6 @@
        xsi:schemaLocation="
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-
     <bean id="productBean" class="az.edu.ada.wm2.dependency_injection_example.beans.Product">
         <property name="id" value="P001" />
         <property name="name" value="Laptop" />
