@@ -1,12 +1,16 @@
 package az.edu.ada.wm2.first_rest_app.model;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 public class Movie {
     private int id;
     private String title;
     private String genre;
     private Double rating;
+    private LocalDateTime createAt;
 
-    public Movie(){
+    public Movie() {
 
     }
 
@@ -49,6 +53,14 @@ public class Movie {
         this.rating = rating;
     }
 
+    public LocalDateTime getCreateAt() {
+        return createAt;
+    }
+
+    public void setCreateAt(LocalDateTime createAt) {
+        this.createAt = createAt;
+    }
+
     @Override
     public String toString() {
         return "Movie{" +
@@ -56,6 +68,7 @@ public class Movie {
                 ", title='" + title + '\'' +
                 ", genre='" + genre + '\'' +
                 ", rating=" + rating +
+                ", createAt=" + createAt +
                 '}';
     }
 }
