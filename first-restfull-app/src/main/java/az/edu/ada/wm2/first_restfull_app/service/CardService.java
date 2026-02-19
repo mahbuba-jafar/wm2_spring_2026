@@ -8,4 +8,6 @@ public interface CardService {
 
     List<Card> getCards();
 
+    Card createCard(Card card);
+
 }

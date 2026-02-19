@@ -7,6 +7,7 @@ public class Card {
     private String cardNo;
     private String ownerName;
     private LocalDate expiryDate;
+    private LocalDate createdAt;
     private BigDecimal balance;
 
     public Card() {
@@ -52,12 +53,21 @@ public class Card {
         this.balance = balance;
     }
 
+    public LocalDate getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = createdAt;
+    }
+
     @Override
     public String toString() {
         return "Card{" +
                 "cardNo='" + cardNo + '\'' +
                 ", ownerName='" + ownerName + '\'' +
                 ", expiryDate=" + expiryDate +
+                ", createdAt=" + createdAt +
                 ", balance=" + balance +
                 '}';
     }

@@ -4,11 +4,9 @@ import az.edu.ada.wm2.first_restfull_app.model.Card;
 import az.edu.ada.wm2.first_restfull_app.service.CardService;
 import az.edu.ada.wm2.first_restfull_app.service.CardServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -19,8 +17,11 @@ import java.util.List;
 @RequestMapping("/cards")
 public class CardController {
 
-//    @Autowired //Field injection
+    //    @Autowired //Field injection
     private CardService cardService;
+
+    @Value("${my.welcome.message}")
+    private String welcomeMessage;
 
 //    @Autowired //Constructor injection
 //    public CardController(CardService cardService) {
@@ -33,8 +34,18 @@ public class CardController {
     }
 
     @GetMapping({"/", ""})
-    public List<Card> getAllCards(){
+    public List<Card> getAllCards() {
         return cardService.getCards();
+    }
+
+    @PostMapping
+    public Card addCard(@RequestBody Card card) {
+        return cardService.createCard(card);
+    }
+
+    @GetMapping("/welcome")
+    public String welcomeMessage() {
+        return welcomeMessage;
     }
 
 }
