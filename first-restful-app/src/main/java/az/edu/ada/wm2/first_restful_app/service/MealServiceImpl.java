@@ -1,6 +1,7 @@
 package az.edu.ada.wm2.first_restful_app.service;
 
 import az.edu.ada.wm2.first_restful_app.model.Meal;
+import az.edu.ada.wm2.first_restful_app.repository.MealRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -10,16 +11,19 @@ import java.util.List;
 @Service
 public class MealServiceImpl implements MealService{
 
-    List<Meal> meals = new ArrayList<>(
-            List.of(
-                    new Meal(1,"TomYam", List.of("Shrimp", "Mushroom"), 10.0),
-                    new Meal(2,"UchBaci", List.of("Tomato", "Pepper", "Meat"), 18.50),
-                    new Meal(3,"Plov", List.of("Rice", "Butter", "Chicken"), 14.50)
-            )
-    );
+    private final MealRepository mealRepo;
+
+    public MealServiceImpl(MealRepository mealRepo) {
+        this.mealRepo = mealRepo;
+    }
 
     @Override
     public List<Meal> getMeals() {
-        return meals;
+        return mealRepo.findAll();
+    }
+
+    @Override
+    public Meal create(Meal meal) {
+        return mealRepo.save(meal);
     }
 }

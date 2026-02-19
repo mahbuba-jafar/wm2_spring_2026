@@ -1,5 +1,6 @@
 package az.edu.ada.wm2.first_restful_app.model;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class Meal {
@@ -7,6 +8,7 @@ public class Meal {
     private String name;
     private List<String> ingredients;
     private Double price;
+    private LocalDateTime createdAt;
 
     public Meal() {}
 
@@ -49,6 +51,14 @@ public class Meal {
         this.price = price;
     }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
     @Override
     public String toString() {
         return "Meal{" +
@@ -56,6 +66,7 @@ public class Meal {
                 ", name='" + name + '\'' +
                 ", ingredients=" + ingredients +
                 ", price=" + price +
+                ", createdAt=" + createdAt +
                 '}';
     }
 }

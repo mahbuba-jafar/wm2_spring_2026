@@ -5,5 +5,7 @@ import az.edu.ada.wm2.first_restful_app.model.Meal;
 import java.util.List;
 
 public interface MealService {
-    public List<Meal> getMeals();
+    List<Meal> getMeals();
+
+    Meal create(Meal meal);
 }
