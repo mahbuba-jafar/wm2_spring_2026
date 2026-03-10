@@ -33,6 +33,6 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public List<Card> getCardsByOwnerName(String ownerName) {
-        return cardRepo.findByOwnerName(ownerName);
+        return cardRepo.findByOwnerNameContaining(ownerName);
     }
 }
