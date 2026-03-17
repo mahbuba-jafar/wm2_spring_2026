@@ -2,10 +2,7 @@ package az.edu.ada.wm2.spring_boot_data_jpa_demo.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
@@ -13,7 +10,9 @@ import java.util.List;
 @Table(name = "tbl_dept")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class DepartmentEntity {
 
     @Id

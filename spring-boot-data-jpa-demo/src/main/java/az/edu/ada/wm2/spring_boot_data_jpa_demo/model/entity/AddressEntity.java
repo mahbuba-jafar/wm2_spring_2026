@@ -6,9 +6,11 @@ import lombok.*;
 
 @Entity
 @Table(name = "tbl_address")
-
+@Builder
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class AddressEntity {
 
     @Id

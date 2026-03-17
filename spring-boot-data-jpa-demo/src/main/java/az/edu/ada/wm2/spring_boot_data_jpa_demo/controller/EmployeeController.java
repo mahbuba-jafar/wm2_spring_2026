@@ -1,5 +1,7 @@
 package az.edu.ada.wm2.spring_boot_data_jpa_demo.controller;
 
+import az.edu.ada.wm2.spring_boot_data_jpa_demo.model.dto.EmployeeRequestDto;
+import az.edu.ada.wm2.spring_boot_data_jpa_demo.model.dto.EmployeeResponseDto;
 import az.edu.ada.wm2.spring_boot_data_jpa_demo.model.entity.EmployeeEntity;
 import az.edu.ada.wm2.spring_boot_data_jpa_demo.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
@@ -15,13 +17,14 @@ public class EmployeeController {
     final EmployeeService employeeService;
 
     @PostMapping
-    public EmployeeEntity saveEmployee(@RequestBody EmployeeEntity employeeSaveRequest) {
-        return employeeService.save(employeeSaveRequest);
+    public EmployeeResponseDto saveEmployee(
+            @RequestBody EmployeeRequestDto employeeSaveRequestDto) {
+        return employeeService.save(employeeSaveRequestDto);
     }
 
     //    @RequestMapping(value = "/list", method = RequestMethod.GET)
     @GetMapping
-    public List<EmployeeEntity> listAll() {
+    public List<EmployeeResponseDto> listAll() {
         return employeeService.getAllEmps();
     }
 

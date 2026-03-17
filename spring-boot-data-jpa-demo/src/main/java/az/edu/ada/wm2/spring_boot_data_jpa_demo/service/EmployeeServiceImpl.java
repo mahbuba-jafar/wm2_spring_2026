@@ -1,8 +1,16 @@
 package az.edu.ada.wm2.spring_boot_data_jpa_demo.service;
 
+import az.edu.ada.wm2.spring_boot_data_jpa_demo.model.dto.EmployeeDepartmentRequestDto;
+import az.edu.ada.wm2.spring_boot_data_jpa_demo.model.dto.EmployeeRequestDto;
+import az.edu.ada.wm2.spring_boot_data_jpa_demo.model.dto.EmployeeResponseDto;
 import az.edu.ada.wm2.spring_boot_data_jpa_demo.model.entity.DepartmentEntity;
 import az.edu.ada.wm2.spring_boot_data_jpa_demo.model.entity.EmployeeEntity;
 import az.edu.ada.wm2.spring_boot_data_jpa_demo.model.entity.SkillEntity;
+import az.edu.ada.wm2.spring_boot_data_jpa_demo.model.mapper.AddressMapper;
+import az.edu.ada.wm2.spring_boot_data_jpa_demo.model.mapper.DepartmentMapper;
+import az.edu.ada.wm2.spring_boot_data_jpa_demo.model.mapper.EmployeeMapperV1;
+import az.edu.ada.wm2.spring_boot_data_jpa_demo.model.mapper.EmployeeMapperV2;
+import az.edu.ada.wm2.spring_boot_data_jpa_demo.repository.AddressRepository;
 import az.edu.ada.wm2.spring_boot_data_jpa_demo.repository.DepartmentRepository;
 import az.edu.ada.wm2.spring_boot_data_jpa_demo.repository.EmployeeRepository;
 import az.edu.ada.wm2.spring_boot_data_jpa_demo.repository.SkillRepository;
@@ -23,43 +31,63 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final DepartmentRepository departmentRepository;
     private final SkillRepository skillRepository;
+    private final AddressRepository addressRepository;
 
     @Override
-    public List<EmployeeEntity> getAllEmps() {
-        return employeeRepository.findAll();
+    public List<EmployeeResponseDto> getAllEmps() {
+        var employeeEntities = employeeRepository.findAll();
+
+        var employeeResponseDtos = employeeEntities.stream().map(
+//                empEnt -> EmployeeMapperV1.employeeToEmployeeResponseDto(empEnt)
+//                EmployeeMapperV1::employeeToEmployeeResponseDto
+                EmployeeMapperV2.INSTANCE::employeeToEmployeeResponseDto
+        ).toList();
+
+        return employeeResponseDtos;
     }
 
     @Override
-    public EmployeeEntity save(EmployeeEntity employeeEntity) {
-        // Handle Department - save if new, or fetch existing
-        if (employeeEntity.getDepartment() != null) {
-            DepartmentEntity dept = employeeEntity.getDepartment();
-            final DepartmentEntity departmentToSave = dept;
+    public EmployeeResponseDto save(EmployeeRequestDto employeeRequestDto) {
+        //Map and save the address request dto
+        var addressEntity = AddressMapper.INSTANCE.addressRequestDtoToAddressEntity(
+                employeeRequestDto.getAddressRequestDto()
+        );
+        var savedAddress = addressRepository.save(addressEntity);
 
-            if (dept.getId() == null) {
-                // Check if department with same name exists
-                Optional<DepartmentEntity> existingDept = departmentRepository
-                        .findByNameIgnoreCase(dept.getName());
-                dept = existingDept.orElseGet(() -> departmentRepository.save(departmentToSave));
+        //Map and save the dept request dto
+        DepartmentEntity departmentEntity = null;
+        EmployeeDepartmentRequestDto departmentRequestDto = employeeRequestDto.getDepartmentRequestDto();
+        if (departmentRequestDto.getId() != null) {
+            // If ID provided, check if exists
+            if (departmentRepository.existsById(departmentRequestDto.getId())) {
+                // Fetch existing department
+                departmentEntity = departmentRepository.findById(departmentRequestDto.getId())
+                        .orElse(null);
             } else {
-                dept = departmentRepository.findById(dept.getId())
-                        .orElseThrow(() -> new RuntimeException("Department not found"));
+                // Create new department with the provided ID
+                departmentEntity = departmentRepository.save(
+                        DepartmentMapper.INSTANCE.employeeDepartmentDtoToDepartent(departmentRequestDto)
+                );
             }
-            employeeEntity.setDepartment(dept);
-        }
-
-        // Handle Address (cascade saves automatically with CascadeType.ALL)
-        if (employeeEntity.getAddress() != null) {
-            employeeEntity.getAddress().setEmployee(employeeEntity);
+        } else {
+            // No ID provided, create new department
+            departmentEntity = departmentRepository.save(
+                    DepartmentMapper.INSTANCE.employeeDepartmentDtoToDepartent(departmentRequestDto)
+            );
         }
 
         // TODO: Handle Skills - Save skills FIRST, then set on employee
-//        employeeEntity.getSkills().stream()
-//                .map(SkillEntity::getName)
-//                .forEach(System.out::println);
 
-        return employeeRepository.save(employeeEntity);
+        // 3. Map Employee DTO to Entity and set the saved Address and Department
+        var employeeEntity = EmployeeMapperV2.INSTANCE.employeeRequestDtoToEmployeeEntity(employeeRequestDto);
 
+        // Override the mapped address and department with the saved ones
+        employeeEntity.setAddress(savedAddress);
+        employeeEntity.setDepartment(departmentEntity);
+
+        var savedEmployee = employeeRepository.save(employeeEntity);
+
+        return EmployeeMapperV2.INSTANCE.employeeToEmployeeResponseDto(savedEmployee);
     }
 
     @Override
