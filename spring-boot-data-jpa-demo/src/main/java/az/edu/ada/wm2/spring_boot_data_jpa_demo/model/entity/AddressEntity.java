@@ -2,11 +2,11 @@ package az.edu.ada.wm2.spring_boot_data_jpa_demo.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "tbl_address")
+
 @Getter
 @Setter
 public class AddressEntity {
@@ -17,6 +17,7 @@ public class AddressEntity {
     private String street;
     private String city;
 
+    @Column(name = "olke")
     private String country;
 
     @OneToOne(mappedBy = "address")

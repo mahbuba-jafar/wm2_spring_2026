@@ -51,7 +51,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         // Handle Address (cascade saves automatically with CascadeType.ALL)
         if (employeeEntity.getAddress() != null) {
             employeeEntity.getAddress().setEmployee(employeeEntity);
-
         }
 
         // TODO: Handle Skills - Save skills FIRST, then set on employee

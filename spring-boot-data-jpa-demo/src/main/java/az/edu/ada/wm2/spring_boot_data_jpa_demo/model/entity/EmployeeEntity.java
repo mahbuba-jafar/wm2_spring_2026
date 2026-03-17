@@ -35,13 +35,13 @@ public class EmployeeEntity {
     @OneToOne(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
     // remove the property from the resulting JSON due to lazy loading
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+//    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private AddressEntity address;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "dept_id", referencedColumnName = "id")
     // remove the property from the resulting JSON due to lazy loading
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+//    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private DepartmentEntity department;
 
     @ManyToMany
