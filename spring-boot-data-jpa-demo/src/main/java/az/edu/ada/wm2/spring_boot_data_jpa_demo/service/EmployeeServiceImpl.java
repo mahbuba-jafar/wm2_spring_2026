@@ -14,9 +14,12 @@ import az.edu.ada.wm2.spring_boot_data_jpa_demo.repository.AddressRepository;
 import az.edu.ada.wm2.spring_boot_data_jpa_demo.repository.DepartmentRepository;
 import az.edu.ada.wm2.spring_boot_data_jpa_demo.repository.EmployeeRepository;
 import az.edu.ada.wm2.spring_boot_data_jpa_demo.repository.SkillRepository;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.hibernate.Hibernate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
@@ -34,16 +37,17 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final AddressRepository addressRepository;
 
     @Override
-    public List<EmployeeResponseDto> getAllEmps() {
-        var employeeEntities = employeeRepository.findAll();
+    public Page<@NonNull EmployeeResponseDto> getAllEmps(Pageable pageable) {
+        var employeeEntitiesPage = employeeRepository.findAll(pageable);
 
-        var employeeResponseDtos = employeeEntities.stream().map(
-//                empEnt -> EmployeeMapperV1.employeeToEmployeeResponseDto(empEnt)
-//                EmployeeMapperV1::employeeToEmployeeResponseDto
+//        var employeeResponseDtos = employeeEntities.stream().map(
+////                empEnt -> EmployeeMapperV1.employeeToEmployeeResponseDto(empEnt)
+////                EmployeeMapperV1::employeeToEmployeeResponseDto
+//                EmployeeMapperV2.INSTANCE::employeeToEmployeeResponseDto
+//        ).toList();
+        return employeeEntitiesPage.map(
                 EmployeeMapperV2.INSTANCE::employeeToEmployeeResponseDto
-        ).toList();
-
-        return employeeResponseDtos;
+        );
     }
 
     @Override
