@@ -2,18 +2,17 @@ package az.edu.ada.wm2.spring_boot_data_jpa_demo.controller;
 
 import az.edu.ada.wm2.spring_boot_data_jpa_demo.model.dto.EmployeeRequestDto;
 import az.edu.ada.wm2.spring_boot_data_jpa_demo.model.dto.EmployeeResponseDto;
+import az.edu.ada.wm2.spring_boot_data_jpa_demo.model.dto.ResponsePage;
 import az.edu.ada.wm2.spring_boot_data_jpa_demo.model.entity.EmployeeEntity;
+import az.edu.ada.wm2.spring_boot_data_jpa_demo.model.mapper.EmployeeMapperV2;
 import az.edu.ada.wm2.spring_boot_data_jpa_demo.repository.EmployeeRepository;
 import az.edu.ada.wm2.spring_boot_data_jpa_demo.service.EmployeeService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/employee")
@@ -31,7 +30,7 @@ public class EmployeeController {
 
     //    @RequestMapping(value = "/list", method = RequestMethod.GET)
     @GetMapping
-    public Page<@NonNull EmployeeResponseDto> listAll(
+    public ResponsePage<EmployeeResponseDto> listAll(
             @RequestParam(defaultValue = "0") int pageNo,
             @RequestParam(defaultValue = "5") int limit,
             @RequestParam(defaultValue = "firstName") String sortBy
@@ -40,7 +39,7 @@ public class EmployeeController {
                 Sort.by(Sort.Direction.ASC, sortBy)
         );
 
-        return employeeService.getAllEmps(pageable);
+        return ResponsePage.from(employeeService.getAllEmps(pageable));
     }
 
     @GetMapping("/{id}")
@@ -61,7 +60,7 @@ public class EmployeeController {
 
     //NOTE: This is the incomplete version, for demo purposes
     @GetMapping("/byCity")
-    public Page<@NonNull EmployeeEntity> findByCity(
+    public ResponsePage<EmployeeResponseDto> findByCity(
             @RequestParam("city") String cityName,
             @RequestParam(defaultValue = "0") int pageNo,
             @RequestParam(defaultValue = "2") int limit,
@@ -70,6 +69,10 @@ public class EmployeeController {
         Pageable pageable = PageRequest.of(pageNo, limit,
                 Sort.by(Sort.Direction.ASC, sortBy)
         );
-        return employeeRepository.findByCity(cityName, pageable);
+
+        var employeePage = employeeRepository.findByCity(cityName, pageable)
+                .map(EmployeeMapperV2.INSTANCE::employeeToEmployeeResponseDto);
+
+        return ResponsePage.from(employeePage);
     }
 }
